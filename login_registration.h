@@ -154,13 +154,13 @@ void client::clientregister()
     system("cls");
     char name[20], card_number[20], gender[20], phone[20], choice, *password, *bogusid;
     float fees, amount;
-    int duration, months, ans;
+    int duration, months = 1, ans;
     bool check = false, loop = false;
     cout << "\n\n\n\n\t\t\t\t\t\t\t\t<-------------- Add a Client ---------------->";
 
     ofstream fout;
     ifstream file2;
-    fout.open("tempclient.dat", ios::binary | ios::out);
+    fout.open("tempclient.dat", ios::binary | ios::app);
 
     if (!fout)
     {
@@ -191,9 +191,15 @@ void client::clientregister()
                     gender[0] -= 32;
                 }
 
-                cout << "\n\n\t\t\t\t\t\t\t\tEnter Client's phone#: ";
+            here:
+                cout << "\n\n\t\t\t\t\t\t\t\tEnter Client's phone#: +92";
                 cin >> ws;
                 cin.get(phone, 20);
+                if (checkphone(phone) == false)
+                {
+                    cout << "\n\n\t\t\t\t\t\t\t\tInvalid Mobile number!" << endl;
+                    goto here;
+                }
 
                 strcpy(this->id, bogusid);
                 strcpy(this->name, name);
@@ -219,8 +225,8 @@ void client::clientregister()
                             char type[] = "Platinum";
                             fees = 3000;
                             duration = 1 * months;
-                            Membership.create_membership(type, duration, fees, bogusid); // should be in temp file as well
-                            this->due_ammount += (fees * months);                        // fees kitni pay krni hai
+                            Membership.create_membership(type, duration, fees, bogusid);
+                            this->dueamount = (fees * months); // fees kitni pay krni hai
                             break;
                         }
                         else if (ans == 2)
@@ -229,7 +235,7 @@ void client::clientregister()
                             fees = 1500;
                             duration = 1 * months;
                             Membership.create_membership(type, duration, fees, bogusid);
-                            this->due_ammount += (fees * months);
+                            this->dueamount = (fees * months);
                             break;
                         }
                         else
@@ -241,23 +247,27 @@ void client::clientregister()
                 else
                 {
                     this->is_member = false;
-                    due_ammount = 1000;
                 }
             }
         } while (check == true);
         password = this->pass_validation();
         strcpy(this->password, password);
-        cout << "\n\n\t\t\t\t\t\t\t\tYour due amount is: " << this->due_ammount << endl;
+        cout << "\n\n\t\t\t\t\t\t\t\tYour due amount is: " << this->dueamount << endl;
         cout << "\n\n\t\t\t\t\t\t\t\tPayment option is available for online payments through credit or debit cards only:\n";
+    x:
         cout << "\n\n\t\t\t\t\t\t\t\tEnter card number: ";
         cin >> ws;
         cin.get(card_number, 20);
+        if (checkcard(card_number) == false)
+        {
+            cout << "\n\n\t\t\t\t\t\t\t\tInvalid Card number!\n";
+            goto x;
+        }
         do
         {
-            cout << "How much would you like to pay: ";
+            cout << "\n\n\t\t\t\t\t\t\t\tHow much would you like to pay: ";
             cin >> this->paid;
-            due_ammount -= paid;
-            if (this->paid < 1000)
+            if (this->paid < 1000 || this->paid > this->dueamount)
             {
                 cout << "\n\n\t\t\t\t\t\t\t\tAmount unacceptable...Minimum amount is 1000 rs/-";
                 cout << "\n\n\t\t\t\t\t\t\t\tWould you like to 1-Exit or 2-Enter again\n";
@@ -269,17 +279,33 @@ void client::clientregister()
                 }
                 else if (choice == 2)
                 {
-
-                    cout << due_ammount;
                     loop = true;
                 }
             }
             else
             {
+                this->dueamount -= this->paid;
                 this->feespaid = true;
             }
         } while (loop == true);
-        // enter_body_stats(this->id);
+        getch();
+        system("cls");
+        cout << "\n\n\n\n\t\t\t\t\t\t\t\t<-------------- Client's Body Statistics---------------->\n\n";
+        cout << "\n\t\t\t\t\t\t\t\tEnter Client's weight in kilograms: ";
+        cin >> this->stats.weight;
+        cout << "\n\t\t\t\t\t\t\t\tEnter Client's height in meters: ";
+        cin >> this->stats.height;
+        cout << "\n\t\t\t\t\t\t\t\tEnter Client's waist measurements in inches: ";
+        cin >> this->stats.waist;
+        cout << "\n\t\t\t\t\t\t\t\tEnter Client's neck measurements in inches: ";
+        cin >> this->stats.neck;
+        cout << "\n\t\t\t\t\t\t\t\tEnter Client's hip measurements in inches: ";
+        cin >> this->stats.hips;
+        this->stats.BMI = this->calculateBMI();
+        this->stats.bodyFatPercentage = this->calculateBodyFatPercentage();
+        cout << "\n\t\t\t\t\t\t\t\tClient's details have been saved succesfully\n";
+        cout << "\n\t\t\t\t\t\t\t\tPress enter to continue\n";
+        getch();
         fout.write(reinterpret_cast<char *>(this), sizeof(*this));
         fout.close();
     }
@@ -317,9 +343,10 @@ void trainer::login_Register()
 
     system("cls");
     heading();
-    cout << "\n\n\t\t\t\t\t\t\t\tPress>> 1-To login:\n\n\n\t\t\t\t\t\t\t\tPress>> 2-To Exit";
+    cout << "\n\n\t\t\t\t\t\t\t\tPress>> 1-To login:\n\n\n\t\t\t\t\t\t\t\tPress>> 2-To Exit\n";
     cout << "\t\t\t\t\t\t\t\t_________________________\n";
     cout << "\n\t\t\t\t\t\t\t\tChoose your desired option: ";
+    cin >> choice;
     do
     {
         if (choice == 1)
