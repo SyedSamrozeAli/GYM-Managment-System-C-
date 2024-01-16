@@ -16,8 +16,7 @@ void client::customer_menu(char id2[20])
             cout << " \n\n\t\t\t\t\t\t\t\t___________________________________________\n";
             cout << " \n\n\t\t\t\t\t\t\t\t<1> View Profile\n";
             cout << " \n\n\t\t\t\t\t\t\t\t<2> View Body Stats \n";
-            cout << " \n\n\t\t\t\t\t\t\t\t<3> View Workout Schedule\n";
-            cout << " \n\n\t\t\t\t\t\t\t\t<4> Logout\n";
+            cout << " \n\n\t\t\t\t\t\t\t\t<3> Logout\n";
             cout << " \n\n\t\t\t\t\t\t\t\t___________________________________________\n";
             cout << " \n\n\t\t\t\t\t\t\t\tChoice: ";
             cin >> choice;
@@ -32,16 +31,13 @@ void client::customer_menu(char id2[20])
                     view_body_stats(id2);
                     break;
                 case 3:
-                    view_workout_schedule();
-                    break;
-                case 4:
                     logout();
                     main_page();
                     break;
                 default:
                     cout << "Wrong input!\n";
                 }
-            } while (choice < 1 || choice > 5);
+            } while (choice < 1 || choice > 3);
         }
     }
     fin.close();
@@ -62,7 +58,7 @@ void client::view_profile(char id2[50])
     {
         while (fin.read(reinterpret_cast<char *>(this), sizeof(*this)))
         {
-            if (strcmp(this->id, id2) == 0)
+            if (strcmp(id2, this->id) == 0)
             {
                 found = true;
                 cout << "\n\t\t\t\t\t\t\t\t_______________________\n\n";
@@ -76,7 +72,7 @@ void client::view_profile(char id2[50])
                 {
                     Membership.display_membership(this->id);
                 }
-                cout << "\n\t\t\t\t\t\t\t\tRemaining balance is: " << due_ammount << endl;
+                cout << "\n\t\t\t\t\t\t\t\tRemaining balance is: " << dueamount << endl;
             }
         }
         if (found == false)
@@ -87,9 +83,9 @@ void client::view_profile(char id2[50])
     fin.close();
     cout << "\n\t\t\t\t\t\t\t\tPress Enter to return to main menu\n";
     getch();
-    customer_menu(this->id);
+    customer_menu(id2);
 }
-void trainer::trainer_menu(char id2[50])
+void trainer::trainer_menu(char id2[20])
 {
 
     system("cls");
@@ -105,9 +101,7 @@ void trainer::trainer_menu(char id2[50])
             cout << " \n\n\t\t\t\t\t\t\t\t___________________________________________\n";
             cout << " \n\n\t\t\t\t\t\t\t\t<1> View Profile\n";
             cout << " \n\n\t\t\t\t\t\t\t\t<2> View All Clients \n";
-            cout << " \n\n\t\t\t\t\t\t\t\t<3> Request Inventory\n";
-            cout << " \n\n\t\t\t\t\t\t\t\t<5> View Shedule \n";
-            cout << " \n\n\t\t\t\t\t\t\t\t<7> Logout\n";
+            cout << " \n\n\t\t\t\t\t\t\t\t<3> Logout\n";
             cout << " \n\n\t\t\t\t\t\t\t\t___________________________________________\n";
             cout << " \n\n\t\t\t\t\t\t\t\tChoice: ";
             cin >> choice;
@@ -116,73 +110,24 @@ void trainer::trainer_menu(char id2[50])
                 switch (choice)
                 {
                 case 1:
-
                     view_profile(id2);
                     break;
                 case 2:
-                    show_clients();
+                    show_clients(id2);
                     break;
                 case 3:
-                    request_inventory();
-                    break;
-                case 4:
-                    request_updatedetails();
-                    break;
-                case 5:
-                    view_schedule();
-                    break;
-                case 7:
                     logout();
                     main_page();
                     break;
                 default:
-                    cout << "Wrong input!\n";
+                    cout << "\n\t\t\t\t\t\t\t\tWrong input!\n";
                 }
-            } while (choice < 1 || choice > 6);
+            } while (choice < 1 || choice > 3);
         }
     }
     fin.close();
 }
 
-void trainer::view_profile(char id2[50])
-{
-
-    bool found = false;
-    system("cls");
-    ifstream fin;
-    fin.open("trainers.dat", ios::binary | ios::in);
-    cout << "\n\n\n\n\t\t\t\t\t\t\t\t<-------------- Your profile ---------------->";
-    if (!fin.is_open())
-    {
-        cout << "\n\n\t\t\t\t\t\t\t\tError in creating file\n";
-    }
-    else
-    {
-        while (fin.read(reinterpret_cast<char *>(this), sizeof(*this)))
-        {
-            if (strcmp(this->id, id2) == 0)
-            {
-                cout << "\n\t\t\t\t\t\t\t\t_______________________\n\n";
-                cout << "\n\t\t\t\t\t\t\t\tName: " << this->name << endl
-                     << "\n\t\t\t\t\t\t\t\tGender: " << this->gender << endl
-                     << "\n\t\t\t\t\t\t\t\tPhone: " << this->phone_number << endl
-                     << "\n\t\t\t\t\t\t\t\tID: " << this->id << endl
-                     << "\n\t\t\t\t\t\t\t\tID: " << this->salary << endl
-                     << "\n\t\t\t\t\t\t\t\tPassword: " << this->password << endl;
-                cout << "\n\t\t\t\t\t\t\t\t_______________________\n\n";
-                found = true;
-            }
-        }
-        if (found == false)
-        {
-            cout << "\n\t\t\t\t\t\t\t\tID not found!\n";
-        }
-    }
-    fin.close();
-    cout << "\n\t\t\t\t\t\t\t\tPress Enter to return to main menu\n";
-    getch();
-    trainer_menu(this->id);
-}
 void client::view_body_stats(char id2[])
 {
     system("cls");
@@ -198,16 +143,62 @@ void client::view_body_stats(char id2[])
     getch();
     customer_menu(id2);
 }
-void trainer::show_clients()
+void trainer::view_profile(char id2[20])
+{
+    bool found = false;
+    system("cls");
+    ifstream fin, fin2;
+    fin.open("trainers.dat", ios::binary | ios::in);
+    cout << "\n\n\n\n\t\t\t\t\t\t\t\t<-------------- Your profile ---------------->";
+    if (!fin.is_open())
+    {
+        cout << "\n\n\t\t\t\t\t\t\t\tError in creating file\n";
+    }
+    else
+    {
+        while (fin.read(reinterpret_cast<char *>(this), sizeof(*this)))
+        {
+            if (strcmp(this->id, id2) == 0)
+            {
+                found = true;
+                cout << "\n\t\t\t\t\t\t\t\t_______________________\n\n";
+                cout << "\n\t\t\t\t\t\t\t\tName: " << this->name << endl
+                     << "\n\t\t\t\t\t\t\t\tGender: " << this->gender << endl
+                     << "\n\t\t\t\t\t\t\t\tPhone: " << this->phone_number << endl
+                     << "\n\t\t\t\t\t\t\t\tID: " << this->id << endl
+                     << "\n\t\t\t\t\t\t\t\tPassword: " << this->password << endl;
+                cout << "\n\t\t\t\t\t\t\t\t_______________________\n\n";
+            }
+        }
+        if (found == false)
+        {
+            cout << "\n\t\t\t\t\t\t\t\tID not found!\n";
+        }
+    }
+    fin.close();
+    cout << "\n\t\t\t\t\t\t\t\tPress Enter to return to main menu\n";
+    getch();
+    trainer_menu(id2);
+}
+
+void trainer::show_clients(char id2[20])
 {
     system("cls");
     ifstream fin;
     fin.open("trainers.dat", ios::binary | ios::in);
+    cout << "\n\n\n\n\t\t\t\t\t\t\t\t<-------------- Showing Clients ---------------->";
     while (fin.read(reinterpret_cast<char *>(this), sizeof(*this)))
     {
-        for (int i = 0; i < numberofClients; i++)
+        if (strcmp(id2, this->id) == 0)
         {
-            cout << &array_of_clients[i] << endl;
+            for (int i = 0; i < numberofClients; i++)
+            {
+                cout << &array_of_clients[i] << endl;
+            }
         }
     }
+    fin.close();
+    cout << "\n\t\t\t\t\t\t\t\tPress Enter to return to main menu\n";
+    getch();
+    trainer_menu(id2);
 }
