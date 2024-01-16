@@ -8,16 +8,16 @@
 #include <cstring>
 #include <windows.h>
 #include <fstream>
+#include <vector>
 using namespace std;
 
 class Ewallet
 {
 private:
-    char transaction_id[20], *transaction_date, *transaction_time;
+    char transaction_id[20], *transaction_date, *transaction_time, inventory_item_name[20];
     bool recieve, send;
     char reciever_id[30];
     char sender_id[20];
-    char inventory_item_name[30];
     float amount;
     friend class admin;
 
@@ -45,6 +45,22 @@ protected:
     char *id_validation();
     int getchoice();
     bool checkid(char id2[], string filename);
+    bool checkphone(char phone[])
+    {
+        if (strlen(phone) > 10 || strlen(phone) < 10)
+        {
+            return false;
+        }
+        return true;
+    }
+    bool checkcard(char card[])
+    {
+        if (strlen(card) < 16 || strlen(card) > 16)
+        {
+            return false;
+        }
+        return true;
+    }
 
 public:
     char *getName()
@@ -148,7 +164,6 @@ public:
         this->quantity = 0;
         this->price = 0.00;
     };
-    void deduct(){};
 };
 
 class membership
@@ -201,6 +216,8 @@ public:
                 fout2.write(reinterpret_cast<char *>(this), sizeof(*this));
             }
         }
+        fout2.close();
+        fin3.close();
         remove("membership.dat");
         rename("temp2.dat", "membership.dat");
     };
@@ -223,7 +240,7 @@ ostream &operator<<(ostream &out, const membership m1)
 {
     out << "\n\t\t\t\t\t\t\t\tMembership ID: " << m1.membership_id << endl
         << "\n\t\t\t\t\t\t\t\tType: " << m1.type << endl
-        << "\n\t\t\t\t\t\t\t\tDuration: " << m1.duration << " months" << endl
+        << "\n\t\t\t\t\t\t\t\tDuration: " << m1.duration << "months" << endl
         << "\n\t\t\t\t\t\t\t\tFees: " << m1.fees << "RS/-" << endl;
     return out;
 }
@@ -233,7 +250,7 @@ class client : public person
 {
 private:
     friend class admin;
-    float paid, due_ammount;
+    float paid, dueamount;
     bool is_member, feespaid;
     membership Membership;
     trainer *Train;
@@ -281,33 +298,11 @@ public:
         strcpy(gender, "\0");
         strcpy(phone_number, "\0");
         strcpy(id, "\0");
-        due_ammount = 0; // gym charges
+        dueamount = 0; // gym charges
         is_member = false;
         feespaid = false;
     };
-    void enter_body_stats(char id2[])
-    {
-        system("cls");
-        cout << "\n\n\n\n\t\t\t\t\t\t\t\t<-------------- Client's Body Statistics---------------->";
-        cout << "\n\t\t\t\t\t\t\t\tEnter Client's weight in kilograms: ";
-        cin >> stats.weight;
-        cout << "\n\t\t\t\t\t\t\t\tEnter Client's height in meters: ";
-        cin >> stats.height;
-        cout << "\n\t\t\t\t\t\t\t\tEnter Client's waist measurements in inches: ";
-        cin >> stats.waist;
-        cout << "\n\t\t\t\t\t\t\t\tEnter Client's neck measurements in inches: ";
-        cin >> stats.neck;
-        cout << "\n\t\t\t\t\t\t\t\tEnter Client's hip measurements in inches: ";
-        cin >> stats.hips;
-        stats.BMI = calculateBMI();
-        stats.bodyFatPercentage = calculateBodyFatPercentage();
-        cout << "\n\t\t\t\t\t\t\t\tClient's details have been saved succesfully\n";
-        cout << "\n\t\t\t\t\t\t\t\tPress enter to continue\n";
-        getch();
-    }
     void view_body_stats(char[]);
-    void payfees(){};
-    void view_workout_schedule(){};
     void view_profile(char[]);
     void login_Register();
     void clientregister();
@@ -326,6 +321,7 @@ class trainer : public person
 private:
     friend class admin;
     float salary;
+    bool paid;
     int numberofClients;
     client array_of_clients[10];
     char expertise[20], time[20];
@@ -339,12 +335,10 @@ public:
         strcpy(expertise, "\0");
         strcpy(phone_number, "\0");
         strcpy(id, "\0");
+        paid = false;
     }
-    void request_inventory(){};
-    void request_updatedetails(){};
-    void view_schedule(){};
-    void show_clients();
 
+    void show_clients(char[]);
     void login_Register();
     void view_profile(char[]);
     void deleteclients(char id[])
@@ -483,5 +477,5 @@ public:
     void client_database();
     void trainer_database();
     void Inventory_database();
-    void Monetary_database(); // yet to be added
+    void Monetary_database();
 };
