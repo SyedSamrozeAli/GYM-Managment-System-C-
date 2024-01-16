@@ -11,8 +11,7 @@ void admin::menu()
          << "\n\n\t\t\t\t\t\t\t\t<2> Enter into Trainer Database" << endl
          << "\n\n\t\t\t\t\t\t\t\t<3> Enter into Inventory Database" << endl
          << "\n\n\t\t\t\t\t\t\t\t<4> Enter into Monetary Database" << endl
-         << "\n\n\t\t\t\t\t\t\t\t<5> Enter into Membership Database" << endl
-         << "\n\n\t\t\t\t\t\t\t\t<6> Logout" << endl;
+         << "\n\n\t\t\t\t\t\t\t\t<5> Logout" << endl;
     cout << "\n\n\t\t\t\t\t\t\t\t___________________________________________\n";
     do
     {
@@ -33,9 +32,6 @@ void admin::menu()
             Monetary_database();
             break;
         case 5:
-            // Membership_database();
-            break;
-        case 6:
             logout();
             main_page();
             break;
@@ -97,17 +93,21 @@ void admin ::client_database()
         default:
             cout << "Wrong Choice!\n";
         }
-    } while (choice < 1 || choice > 8);
+    } while (choice < 1 || choice > 9);
 }
 
 // Client
 void admin::add_client()
 {
+    char buffer[30];
     ofstream file, fout;
     ifstream file2, fin;
 
+    int k = 0;
+
     if (details.number_of_client < maximum_client_number)
     {
+
         fout.open("client.dat", ios::binary | ios::app);
         fin.open("tempclient.dat", ios::binary | ios::in);
         while (fin.read(reinterpret_cast<char *>(&Client), sizeof(Client)))
@@ -115,20 +115,21 @@ void admin::add_client()
             if (Client.feespaid == true)
             {
                 fout.write(reinterpret_cast<char *>(&Client), sizeof(Client));
-                cout << "Client successfully added to the system!\n";
+                cout << "\n\n\n\n\t\t\t\t\t\t\t\tClient successfully added to the system!\n";
+
                 wallet.amount = Client.paid;
                 wallet.recieve = true;
                 wallet.send = false;
                 strcpy(wallet.sender_id, Client.id);
-                char buffer[30];
-                strcpy(buffer, strcat(Client.id, "2233"));
+                strcpy(buffer, strcat(Client.id, "223"));
                 wallet.setid(buffer);
                 wallet.setdate(getdate());
                 wallet.setime(gettime());
-                ofstream fout;
-                fout.open("transaction_history.dat", ios::app);
-                fout.write(reinterpret_cast<char *>(&wallet), sizeof(wallet));
-                fout.close();
+
+                ofstream fout2;
+                fout2.open("transaction_history.dat", ios::binary | ios::app);
+                fout2.write(reinterpret_cast<char *>(&wallet), sizeof(wallet));
+                fout2.close();
             }
             else
             {
@@ -136,13 +137,12 @@ void admin::add_client()
                 break;
             }
         }
-        getch();
-        fin.close();
         fout.close();
+        fin.close();
     }
     else
     {
-        cout << "\n\n\n\n\t\t\t\t\t\t\t\tClient cannot be added into the system!\n";
+        cout << "\n\n\n\n\t\t\t\t\t\t\t\tMaximum Clientele Reached!\n";
     }
 
     file2.open("Admin.dat", ios::binary | ios::in);
@@ -153,7 +153,9 @@ void admin::add_client()
     file.open("Admin.dat", ios::binary | ios::out);
     file.write(reinterpret_cast<char *>(&details), sizeof(details));
     file.close();
+
     getch();
+    remove("tempclient.dat");
     client_database();
 }
 void admin::allot_trainer()
@@ -299,80 +301,7 @@ void admin::search_client()
     else
     {
         cout << "\n\n\n\n\t\t\t\t\t\t\t\t<-------------- Search a Client ---------------->";
-        //     cout << "\n\t\t\t\t\t\t\t\t1.BY NAME\n"
-        //          << "\n\t\t\t\t\t\t\t\t2.BY MEMBERSHIP\n"
-        //          << "\n\t\t\t\t\t\t\t\t3.BY ID\n"
-        //          << "\n\t\t\t\t\t\t\t\t4.BY GENDER\n"
-        //          << endl;
-        // here:
-        //     cout << "\n\t\t\t\t\t\t\t\tChoice: ";
-        //     cin >> choice;
-        //     if (choice == 1)
-        //     {
-        //         cout << "\n\n\t\t\t\t\t\t\t\tEnter search name: ";
-        //         cin >> ws;
-        //         cin.get(search_name, 20);
-        //     }
-        //     else if (choice == 2)
-        //     {
-        //         cout << "\n\n\t\t\t\t\t\t\t\tEnter search membership type: ";
-        //         cin >> ws;
-        //         cin.get(mem_type, 20);
-        //         if (mem_type[0] >= 'a' && mem_type[0] <= 'z')
-        //         {
-        //             mem_type[0] -= 32;
-        //         }
-        //     }
-        //     else if (choice == 3)
-        //     {
-        //         cout << "\n\n\t\t\t\t\t\t\t\tEnter Client ID: ";
-        //         cin.ignore();
-        //         cin.get(search_id, 20);
-        //         for (int i = 0; i < strlen(search_id); i++)
-        //         {
-        //             if (search_id[i] >= 'a' && search_id[i] <= 'z')
-        //             {
-        //                 search_id[i] -= 32;
-        //             }
-        //         }
-        //     }
-        //     else if (choice == 4)
-        //     {
-        //         cout << "\n\n\t\t\t\t\t\t\t\tEnter search gender:  ";
-        //         cin.ignore();
-        //         cin.get(search_gender, 20);
-        //         if (search_gender[0] >= 'a' && search_gender[0] <= 'z')
-        //         {
-        //             search_gender[0] -= 32;
-        //         }
-        //     }
-        //     else
-        //     {
-        //         cout << "\n\t\t\t\t\t\t\t\tWrong Choice\n";
-        //         goto here;
-        //     }
-        //     while (fin.read(reinterpret_cast<char *>(&Client), sizeof(Client)))
-        //     {
-        //         if ((strcmp(Client.id, search_id) == 0))
-        //         {
-        //             display(Client);
-        //             found = true;
-        //         }
-        //         else if ((strcmp(Client.name, search_name) == 0))
-        //         {
-        //             display(Client);
-        //             found = true;
-        //         }
-        //         else if ((strcmp(Client.gender, search_gender) == 0))
-        //         {
-        //             display(Client);
-        //             found = true;
-        //         }
-        //         else if ((strcmp(Client.Membership.type, mem_type) == 0))
-        //         {
-        //             display(Client);
-        //             found = true;
-        //         }
+
         cout << "\n\n\t\t\t\t\t\t\t\tEnter Client ID: ";
         cin.ignore();
         cin.get(search_id, 20);
@@ -380,6 +309,7 @@ void admin::search_client()
         {
             if (strcmp(search_id, Client.id) == 0)
             {
+                found = true;
                 cout << "\n\t\t\t\t\t\t\t\tName: " << Client.name << endl
                      << "\n\t\t\t\t\t\t\t\tGender: " << Client.gender << endl
                      << "\n\t\t\t\t\t\t\t\tPhone: " << Client.phone_number << endl
@@ -472,6 +402,7 @@ void admin::update_client()
     char update_id[20];
     char *new_password;
     int choice;
+    float fees;
     bool flag = false, check = false;
 
     file.open("client.dat", ios::binary | ios::in | ios::out | ios::ate);
@@ -501,6 +432,7 @@ void admin::update_client()
                     cout << "\n\t\t\t\t\t\t\t\t<2> Gender\n";
                     cout << "\n\t\t\t\t\t\t\t\t<3> Phone# \n";
                     cout << "\n\t\t\t\t\t\t\t\t<4> Password \n";
+                    cout << "\n\t\t\t\t\t\t\t\t<5> Fees paid \n";
                     cout << "\n\t\t\t\t\t\t\t\t__________________________\n";
                     cout << "\n\t\t\t\t\t\t\t\tEnter Choice: ";
                     cin >> choice;
@@ -528,6 +460,18 @@ void admin::update_client()
                         new_password = Client.pass_validation();
                         strcpy(Client.password, new_password);
                         break;
+                    case 5:
+                        cout << "\n\t\t\t\t\t\t\t\tClient's balance: " << Client.dueamount << endl;
+                        do
+                        {
+                            cout << "\n\t\t\t\t\t\t\t\tEnter the remaining amount of fees paid: ";
+                            cin >> fees;
+                            if (fees > Client.dueamount || fees < Client.dueamount)
+                            {
+                                cout << "\n\t\t\t\t\t\t\t\tThe fees paid is not within the limit\n";
+                            }
+                        } while (fees != Client.dueamount);
+                        Client.dueamount -= fees;
                     default:
                         cout << "Invalid choice...Enter again!\n";
                     }
@@ -536,6 +480,8 @@ void admin::update_client()
                 } while (choice < 1 || choice > 5);
 
                 file.write(reinterpret_cast<char *>(&Client), sizeof(Client));
+                cout << "\n\t\t\t\t\t\t\t\tUpdate Successful\n";
+                getch();
             }
         }
 
@@ -578,7 +524,8 @@ void admin::trainer_database()
          << "\n\n\t\t\t\t\t\t\t\t<4> Update trainer Information " << endl
          << "\n\n\t\t\t\t\t\t\t\t<5> Search a trainer  " << endl
          << "\n\n\t\t\t\t\t\t\t\t<6> View Total trainers " << endl
-         << "\n\n\t\t\t\t\t\t\t\t<7> Go Back" << endl;
+         << "\n\n\t\t\t\t\t\t\t\t<7> Manage trainer attendance" << endl
+         << "\n\n\t\t\t\t\t\t\t\t<8> Go Back" << endl;
     cout << "\n\n\t\t\t\t\t\t\t\t___________________________________________\n";
     cout << "\n\n\t\t\t\t\t\t\t\tChoose your desired option: ";
     do
@@ -605,12 +552,15 @@ void admin::trainer_database()
             gettotaltrainers();
             break;
         case 7:
+            Trainer_attendance_menu();
+            break;
+        case 8:
             menu();
             break;
         default:
             cout << "Wrong Choice!\n";
         }
-    } while (choice < 1 || choice > 7);
+    } while (choice < 1 || choice > 8);
 }
 void admin::Inventory_database()
 {
@@ -700,9 +650,15 @@ void admin::add_trainer()
                 cin >> ws;
                 cin.get(gender, 20);
 
-                cout << "\n\n\t\t\t\t\t\t\t\tEnter trainer's phone#: ";
+            here:
+                cout << "\n\n\t\t\t\t\t\t\t\tEnter trainer's phone#: +92";
                 cin >> ws;
                 cin.get(phone, 20);
+                if (checkphone(phone) == false)
+                {
+                    cout << "\n\n\t\t\t\t\t\t\t\tInvalid Mobile number!" << endl;
+                    goto here;
+                }
 
                 cout << "\n\n\t\t\t\t\t\t\t\tEnter trainer's expertise: ";
                 cin >> ws;
@@ -729,6 +685,7 @@ void admin::add_trainer()
                 strcpy(Trainer.expertise, expertise);
                 strcpy(Trainer.time, time);
                 Trainer.salary = salary;
+                Trainer.paid = false;
                 Trainer.numberofClients = 0;
                 check = false;
             }
@@ -737,6 +694,7 @@ void admin::add_trainer()
         password = pass_validation();
         strcpy(Trainer.password, password);
         fout.write(reinterpret_cast<char *>(&Trainer), sizeof(Trainer));
+        fout.close();
 
         file2.open("Admin.dat", ios::binary | ios::in);
         file2.read(reinterpret_cast<char *>(&details), sizeof(details));
@@ -747,7 +705,6 @@ void admin::add_trainer()
         file.write(reinterpret_cast<char *>(&details), sizeof(details));
         file.close();
 
-        fout.close();
         trainer_database();
     }
 }
@@ -966,22 +923,22 @@ void admin::update_trainer()
                     case 1:
                         cout << "\n\t\t\t\t\t\t\t\tEnter new Name: ";
                         cin >> ws;
-                        cin.get(Client.name, 50);
+                        cin.get(Trainer.name, 20);
                         break;
                     case 2:
                         cout << "\n\t\t\t\t\t\t\t\tEnter new Gender: ";
                         cin >> ws;
-                        cin.get(Client.gender, 50);
+                        cin.get(Trainer.gender, 20);
                         break;
                     case 3:
                         cout << "\n\t\t\t\t\t\t\t\tEnter new Phone#: ";
                         cin >> ws;
-                        cin.get(Client.phone_number, 50);
+                        cin.get(Trainer.phone_number, 20);
                         break;
                     case 4:
                         cout << "\n\t\t\t\t\t\t\t\tEnter new Password: ";
                         new_password = pass_validation();
-                        strcpy(Client.password, new_password);
+                        strcpy(Trainer.password, new_password);
                         break;
                     default:
                         cout << "Invalid choice...Enter again!\n";
@@ -1001,22 +958,7 @@ void admin::update_trainer()
         trainer_database();
     }
 }
-// void admin::show_clients()
-// {
-//     ifstream fin;
-//     fin.open("clients.dat", ios::binary | ios::in);
-//     while (fin.read(reinterpret_cast<char *>(&Client), sizeof(Client)))
-//     {
-//         for (int i = 0; i < Trainer.numberofClients; i++)
-//         {
-//             if (strcmp(Trainer.array_of_clients[i], Client.id) == 0)
-//             {
-//                 cout << &Trainer.array_of_clients[i] << endl;
-//             }
-//         }
-//     }
-//     fin.close();
-// }
+
 void admin::gettotaltrainers()
 {
     ifstream fin;
@@ -1043,6 +985,7 @@ void admin ::add_inventory()
     char id_num[20], id[20], name[20], idname[5];
     int quantity;
     float price;
+
     ifstream afin;
     ofstream afout;
     afin.open("Admin.dat", ios::binary | ios::in);
@@ -1050,14 +993,8 @@ void admin ::add_inventory()
     afin.close();
 
     cout << "\n\n\n\n\t\t\t\t\t\t\t\t<-------------- Add Inventory ---------------->";
-    cout << "\n\n\t\t\t\t\t\t\t\tEnter Equipment name: ";
-    cin >> ws;
-    cin.get(name, 20);
-
     cout << "\n\n\t\t\t\t\t\t\t\tEnter the quantity  of equipment you would like to order: ";
     cin >> quantity;
-    cout << "\n\n\t\t\t\t\t\t\t\tEnter the price of equipment: ";
-    cin >> price;
     for (int i = 0; i < quantity; i++)
     {
         fout.open("inventory.dat", ios::binary | ios::app);
@@ -1076,6 +1013,11 @@ void admin ::add_inventory()
             }
             else
             {
+                cout << "\n\n\t\t\t\t\t\t\t\tEnter Equipment name: ";
+                cin.ignore();
+                cin.get(name, 20);
+                cout << "\n\n\t\t\t\t\t\t\t\tEnter the price of equipment: ";
+                cin >> price;
                 strcpy(inventory.item_id, id);
                 strcpy(inventory.item_name, name);
                 inventory.price = price;
@@ -1110,7 +1052,7 @@ void admin ::add_inventory()
     afout.open("Admin.dat", ios::binary | ios::out);
     afout.write(reinterpret_cast<char *>(&details), sizeof(details));
     afout.close();
-
+    cout << "\n\t\t\t\t\t\t\t\tPress enter to continue\n";
     getch();
     Inventory_database();
 }
@@ -1218,11 +1160,12 @@ void admin::display_all_inventory()
         cout << "\n\n\n\n\t\t\t\t\t\t\t\t<-------------- Display All Inventory ---------------->";
         while (fin.read(reinterpret_cast<char *>(&inventory), sizeof(inventory)))
         {
-            cout << "\n\n\t\t\t\t\t\t\t\tEquipment Name: " << inventory.item_name
-                 << "\n\t\t\t\t\t\t\t\tEquipment ID: " << inventory.item_id
-                 << "\n\t\t\t\t\t\t\t\tQuantity ordered: " << inventory.quantity
+            cout << "\n\n\t\t\t\t\t\t\t\tEquipment Name: " << inventory.item_name << endl
+                 << "\n\t\t\t\t\t\t\t\tEquipment ID: " << inventory.item_id << endl
+                 << "\n\t\t\t\t\t\t\t\tQuantity ordered: " << inventory.quantity << endl
                  << "\n\t\t\t\t\t\t\t\tPrice: " << inventory.price << endl;
-            cout << "\n\t\t\t\t\t\t\t\t_______________________\n\n";
+            cout << endl
+                 << endl;
         }
     }
     cout << "\n\t\t\t\t\t\t\t\tPress Enter to Continue...\n";
@@ -1710,40 +1653,40 @@ here:
     ofstream fout;
     ifstream fin1, fin2;
 
-    fout.open("Client Attendance.dat", ios::binary | ios::app);
-    fin1.open("Client Attendance.dat", ios::binary | ios::in);
+    fout.open("Trainer Attendance.dat", ios::binary | ios::app);
+    fin1.open("Trainer Attendance.dat", ios::binary | ios::in);
     if (!fout || !fin1)
     {
         cout << "\n\n\t\t\t\t\t\t\t\tError in creating file\n";
     }
     else
     {
-        while (fin1.read(reinterpret_cast<char *>(&Client_attendance), sizeof(Client_attendance)))
+        while (fin1.read(reinterpret_cast<char *>(&Trainer_attendance), sizeof(Trainer_attendance)))
         {
-            if (strcmp(Client_attendance.date, c_date) == 0)
+            if (strcmp(Trainer_attendance.date, c_date) == 0)
             {
                 cout << "\n\n\t\t\t\t\t\t\t\tAttendance Already Taken. TRY ANOTHER DATE";
                 goto here;
             }
         }
     }
-    strcpy(Client_attendance.date, c_date);
-    fin2.open("Client.dat", ios::binary | ios::in);
+    strcpy(Trainer_attendance.date, c_date);
+    fin2.open("Trainers.dat", ios::binary | ios::in);
     if (!fin2)
     {
         cout << "\n\n\t\t\t\t\t\t\t\tError in Opening file\n";
     }
     else
     {
-        while (fin2.read(reinterpret_cast<char *>(&Client), sizeof(Client)))
+        while (fin2.read(reinterpret_cast<char *>(&Trainer), sizeof(Trainer)))
         {
-            cout << "\n\n\t\t\t\t\t\t\t\tClient Name  : " << Client.name;
-            cout << "\n\n\t\t\t\t\t\t\t\tClient ID: " << Client.id;
-            strcpy(Client_attendance.id, Client.id);
+            cout << "\n\n\t\t\t\t\t\t\t\tTrainer Name  : " << Trainer.name;
+            cout << "\n\n\t\t\t\t\t\t\t\tTrainer ID: " << Trainer.id;
+            strcpy(Trainer_attendance.id, Trainer.id);
             cout << "\n\n\t\t\t\t\t\t\tPress [P] for present and [A] for absent....";
             cin >> ws;
-            cin >> Client_attendance.marked;
-            fout.write(reinterpret_cast<char *>(&Client_attendance), sizeof(Client_attendance));
+            cin >> Trainer_attendance.marked;
+            fout.write(reinterpret_cast<char *>(&Trainer_attendance), sizeof(Trainer_attendance));
         }
     }
     fout.close();
@@ -1762,11 +1705,11 @@ void admin::view_Trainer_attendance()
     cout << "\n\n\t\t\t\t\t\t\t\tEnter the date you want to search attendance: ";
     cin.ignore();
     gets(date);
-    ifstream fin_client, fin_attendance;
-    fin_client.open("Client.dat", ios::binary | ios::in);
-    fin_attendance.open("Client Attendance.dat", ios::binary | ios::in);
+    ifstream fin_trainer, fin_attendance;
+    fin_trainer.open("Trainers.dat", ios::binary | ios::in);
+    fin_attendance.open("Trainer Attendance.dat", ios::binary | ios::in);
 
-    if (!fin_client || !fin_attendance)
+    if (!fin_trainer || !fin_attendance)
     {
         cout << "\n\n\t\t\t\t\t\t\t\tError in opening file!";
     }
@@ -1774,11 +1717,11 @@ void admin::view_Trainer_attendance()
     {
         cout << endl
              << endl;
-        while (fin_client.read(reinterpret_cast<char *>(&Client), sizeof(Client)))
+        while (fin_trainer.read(reinterpret_cast<char *>(&Trainer), sizeof(Trainer)))
         {
-            while (fin_attendance.read(reinterpret_cast<char *>(&Client_attendance), sizeof(Client_attendance)))
+            while (fin_attendance.read(reinterpret_cast<char *>(&Trainer_attendance), sizeof(Trainer_attendance)))
             {
-                if (strcmp(Client.id, Client_attendance.id) == 0 && strcmp(date, Client_attendance.date) == 0)
+                if (strcmp(Trainer.id, Trainer_attendance.id) == 0 && strcmp(date, Trainer_attendance.date) == 0)
                 {
                     flag = 1;
                     break;
@@ -1788,9 +1731,9 @@ void admin::view_Trainer_attendance()
             {
                 break;
             }
-            cout << "\n\t\t\t\t\t\t\t\tClient Name: " << Client.name;
-            cout << "\n\t\t\t\t\t\t\t\tClient ID: " << Client.id << endl;
-            cout << "\n\t\t\t\t\t\t\t\tAttendance: " << Client_attendance.marked;
+            cout << "\n\t\t\t\t\t\t\t\tTrainer Name: " << Trainer.name;
+            cout << "\n\t\t\t\t\t\t\t\tTrainer ID: " << Trainer.id << endl;
+            cout << "\n\t\t\t\t\t\t\t\tAttendance: " << Trainer_attendance.marked;
 
             fin_attendance.seekg(0);
             cout << "\n\n\t\t\t\t\t\t\t-----------------------------------------------------------\n";
@@ -1802,78 +1745,81 @@ void admin::view_Trainer_attendance()
         cout << "\t\t\t\t\t\t\t\tAttendance For this Date had not been Taken";
     }
     fin_attendance.close();
-    fin_client.close();
+    fin_trainer.close();
 }
 
 void admin::search_Trainer_attendance()
 {
     system("cls");
-    cout << "\n\n\n\n\t\t\t\t\t\t\t\t<-------------- Search A Client's Attendance ---------------->";
+    cout << "\n\n\n\n\t\t\t\t\t\t\t\t<-------------- Search A Trainer's Attendance ---------------->";
     int total = 0, p = 0, a = 0, flag = 0, i = 1;
     char id[15], ans;
     cin.ignore();
 
-    ifstream fin_client;
+    ifstream fin_trainer;
     ifstream fin_attendance;
-    fin_client.open("Client.dat", ios::binary | ios::in);
-    // if (!fin_client)
-    // {
-    //     cout << "\n\n\t\t\t\t\t\t\t\tAttendance or either Records of Students have not been input in the system";
-    //     getch();
-    //     Client_attendance_menu();
-    // }
-    // cout << "\n\n\t\t\t\t\t\t\t\tFollwing are the Client's ID which are Currently stored in the System: " << endl;
-
-    // while (fin_client.read(reinterpret_cast<char *>(&Client), sizeof(Client)))
-    // {
-    //     cout << "\n\t\t\t\t\t\t\t\t   " << i << ". " << Client.id << endl;
-    //     i++;
-    // }
-    cout << "\n\n\t\t\t\t\t\t\t\tEnter the Student ID You Want To Search: ";
-    gets(id);
-    cout << "\n\n\t\t\t\t\t\t\t\t>> Attendance <<";
-    fin_attendance.open("Client Attendance.dat", ios::binary | ios::in);
-
-    if (!fin_client || !fin_attendance)
+    fin_trainer.open("trainers.dat", ios::binary | ios::in);
+    if (!fin_trainer)
     {
         cout << "\n\n\t\t\t\t\t\t\t\tAttendance or either Records of Students have not been input in the system";
         getch();
-        Client_attendance_menu();
+        Trainer_attendance_menu();
+    }
+    cout << "\n\n\t\t\t\t\t\t\t\tFollwing are the Trainer's ID which are Currently stored in the System: " << endl;
+
+    while (fin_trainer.read(reinterpret_cast<char *>(&Trainer), sizeof(Trainer)))
+    {
+        cout << "\n\t\t\t\t\t\t\t\t   " << i << ". " << Trainer.id << endl;
+        i++;
+    }
+    fin_trainer.close();
+
+    fin_trainer.open("trainers.dat", ios::binary | ios::in);
+    cout << "\n\n\t\t\t\t\t\t\t\tEnter the Student ID You Want To Search: ";
+    gets(id);
+    cout << "\n\n\t\t\t\t\t\t\t\t>> Attendance <<";
+    fin_attendance.open("Trainer Attendance.dat", ios::binary | ios::in);
+
+    if (!fin_trainer || !fin_attendance)
+    {
+        cout << "\n\n\t\t\t\t\t\t\t\tAttendance or either Records of Students have not been input in the system";
+        getch();
+        Trainer_attendance_menu();
     }
     else
     {
         cout << "\n\n";
-        while (fin_client.read(reinterpret_cast<char *>(&Client), sizeof(Client)))
+        while (fin_trainer.read(reinterpret_cast<char *>(&Trainer), sizeof(Trainer)))
         {
-            if (strcmp(Client.id, id) == 0)
+            if (strcmp(Trainer.id, id) == 0)
             {
 
-                cout << "\n\n\t\t\t\t\t\t\t\tStudent Name  : " << Client.name;
-                cout << "\n\t\t\t\t\t\t\t\tStudent ID    : " << Client.id << endl;
+                cout << "\n\n\t\t\t\t\t\t\t\tTrainer Name  : " << Trainer.name;
+                cout << "\n\t\t\t\t\t\t\t\tTrainer ID    : " << Trainer.id << endl;
                 flag = 1;
                 break;
             }
         }
         if (flag == 0)
         {
-            cout << "\n\n\t\t\t\t\t\t\tThis Student ID is not available in the System\n\n\t\t\t\t\t\t\tPress any key to continue...";
+            cout << "\n\n\t\t\t\t\t\t\tThis Trainer's ID is not available in the System\n\n\t\t\t\t\t\t\tPress any key to continue...";
             getch();
-            Client_attendance_menu();
+            Trainer_attendance_menu();
         }
-        while (fin_attendance.read(reinterpret_cast<char *>(&Client_attendance), sizeof(Client_attendance)))
+        while (fin_attendance.read(reinterpret_cast<char *>(&Trainer_attendance), sizeof(Trainer_attendance)))
         {
 
-            if ((strcmp(id, Client_attendance.id)) == 0 && Client_attendance.marked != '\0')
+            if ((strcmp(id, Trainer_attendance.id)) == 0 && Trainer_attendance.marked != '\0')
             {
                 total++;
-                if (Client_attendance.marked == 'p' || Client_attendance.marked == 'P')
+                if (Trainer_attendance.marked == 'p' || Trainer_attendance.marked == 'P')
                     p++;
                 else
                     a++;
             }
         }
-        fin_client.close();
-        fin_attendance.seekg(0);
+        fin_trainer.close();
+        fin_attendance.close();
 
         cout << "\n\t\t\t\t\t\t\t\tTotal Classes: " << total;
         cout << "\n\t\t\t\t\t\t\t\tPresent: " << p;
@@ -1884,28 +1830,27 @@ void admin::search_Trainer_attendance()
         cin >> ans2;
         if (ans2 == 'y' || ans2 == 'Y')
         {
-            while (fin_attendance.read(reinterpret_cast<char *>(&Client_attendance), sizeof(Client_attendance)))
+            fin_attendance.open("Trainer Attendance.dat", ios::binary | ios::in);
+            while (fin_attendance.read(reinterpret_cast<char *>(&Trainer_attendance), sizeof(Trainer_attendance)))
             {
-
-                cout << "hello1";
-                if ((strcmp(id, Client_attendance.id)) == 0 && (Client_attendance.marked != '\0'))
+                if ((strcmp(id, Trainer_attendance.id)) == 0 && (Trainer_attendance.marked != '\0'))
                 {
-                    if (Client_attendance.marked == 'p' || Client_attendance.marked == 'P')
-                        cout << "\n\t\t\t\t\t\t\t\t" << Client_attendance.date << " : Present";
+                    if (Trainer_attendance.marked == 'p' || Trainer_attendance.marked == 'P')
+                        cout << "\n\t\t\t\t\t\t\t\t" << Trainer_attendance.date << " : Present";
                     else
-                        cout << "\n\t\t\t\t\t\t\t\t" << Client_attendance.date << " : Absent";
+                        cout << "\n\t\t\t\t\t\t\t\t" << Trainer_attendance.date << " : Absent";
                 }
             }
         }
+        fin_attendance.close();
     }
-    fin_attendance.close();
 }
 
 void admin::edit_Trainer_attendance()
 {
 
     system("cls");
-    cout << "\n\n\n\n\t\t\t\t\t\t\t\t<-------------- Edit A Clients's Attendance ---------------->";
+    cout << "\n\n\n\n\t\t\t\t\t\t\t\t<-------------- Edit A Trainers's Attendance ---------------->";
     int flag;
     char id[15], date[15], ans;
 
@@ -1916,11 +1861,11 @@ void admin::edit_Trainer_attendance()
     fflush(stdin);
     cout << "\n\n\t\t\t\t\t\t\t\tEnter Date[dd/mm/yyyy]: ";
     gets(date);
-    ifstream fin_client;
+    ifstream fin_trainer;
     fstream file_attendance;
-    fin_client.open("Trainers.dat", ios::binary | ios::in);
-    file_attendance.open("Trainers Attendance.dat", ios::binary | ios::ate | ios::out | ios::in);
-    if (!fin_client || !file_attendance)
+    fin_trainer.open("trainers.dat", ios::binary | ios::in);
+    file_attendance.open("Trainer Attendance.dat", ios::binary | ios::ate | ios::out | ios::in);
+    if (!fin_trainer || !file_attendance)
     {
         cout << "\n\n\t\t\t\t\t\t\t\tAttendance or either Records of Trainer have not been input in the system";
         getch();
@@ -1930,13 +1875,13 @@ void admin::edit_Trainer_attendance()
     {
         cout << "\n\n";
         file_attendance.seekg(0);
-        while (fin_client.read(reinterpret_cast<char *>(&Client), sizeof(Client)))
+        while (fin_trainer.read(reinterpret_cast<char *>(&Trainer), sizeof(Trainer)))
         {
-            if ((strcmp(id, Client.id)) == 0)
+            if ((strcmp(id, Trainer.id)) == 0)
             {
-                while (file_attendance.read(reinterpret_cast<char *>(&Client_attendance), sizeof(Client_attendance)))
+                while (file_attendance.read(reinterpret_cast<char *>(&Trainer_attendance), sizeof(Trainer_attendance)))
                 {
-                    if ((strcmp(id, Client_attendance.id)) == 0 && (strcmp(date, Client_attendance.date)) == 0)
+                    if ((strcmp(id, Trainer_attendance.id)) == 0 && (strcmp(date, Trainer_attendance.date)) == 0)
                     {
                         flag = 1;
                         break;
@@ -1952,15 +1897,14 @@ void admin::edit_Trainer_attendance()
 
     if (flag == 1)
     {
-        // fout_attendance.open("Client Attendance.dat", ios::ate | ios::binary);
-        cout << "\n\t\t\t\t\t\t\t\tTrainer Name: " << Client.name;
-        cout << "\n\t\t\t\t\t\t\t\tTrainer ID: " << Client.id << endl;
+        cout << "\n\t\t\t\t\t\t\t\tTrainer Name: " << Trainer.name;
+        cout << "\n\t\t\t\t\t\t\t\tTrainer ID: " << Trainer.id << endl;
 
-        cout << "\n\t\t\t\t\t\t\t\tAttendance: " << Client_attendance.marked;
+        cout << "\n\t\t\t\t\t\t\t\tAttendance: " << Trainer_attendance.marked;
         cout << "\n\n\t\t\t\t\t\t\tPress [P] for present and [A] for absent....";
-        cin >> Client_attendance.marked;
-        file_attendance.seekp(-(long)sizeof(Client_attendance), ios_base::cur);
-        file_attendance.write(reinterpret_cast<char *>(&Client_attendance), sizeof(Client_attendance));
+        cin >> Trainer_attendance.marked;
+        file_attendance.seekp(-(long)sizeof(Trainer_attendance), ios_base::cur);
+        file_attendance.write(reinterpret_cast<char *>(&Trainer_attendance), sizeof(Trainer_attendance));
         cout << "\n\n\t\t\t\t\t\t\t\tEdit Successfully";
     }
 
@@ -1969,7 +1913,7 @@ void admin::edit_Trainer_attendance()
         cout << "\n\t\t\t\t\t\t\t\tAttendance and Trainer ID not Matched\n\n\t\t\t\t\t\t\t---------------------------------------------------------------------------------------------------\n\n";
     }
 
-    fin_client.close();
+    fin_trainer.close();
     file_attendance.close();
 }
 void admin::Monetary_database()
@@ -1981,8 +1925,7 @@ void admin::Monetary_database()
     cout << "\n\n\t\t\t\t\t\t\t\t<1> View Monetary information" << endl
          << "\n\n\t\t\t\t\t\t\t\t<2> Pay Salary to Trainer " << endl
          << "\n\n\t\t\t\t\t\t\t\t<3> View Transaction History" << endl
-         << "\n\n\t\t\t\t\t\t\t\t<4> View Pending Registrations of Clients" << endl
-         << "\n\n\t\t\t\t\t\t\t\t<5> Go Back" << endl;
+         << "\n\n\t\t\t\t\t\t\t\t<4> Go Back" << endl;
     cout << "\n\n\t\t\t\t\t\t\t\t___________________________________________\n";
     do
     {
@@ -2000,10 +1943,8 @@ void admin::Monetary_database()
             transaction_history();
             break;
         case 4:
-            // pending_registration();
-            break;
-        case 5:
-            menu();
+            logout();
+            main_page();
             break;
         default:
             cout << "Wrong Choice!\n";
@@ -2017,55 +1958,73 @@ void admin::paysalary()
     char id[20];
     int i = 0;
     ifstream fin;
+    fstream fin2;
     ofstream fout;
     fin.open("Admin.dat", ios::binary | ios::in);
     fin.read(reinterpret_cast<char *>(&details), sizeof(details));
     fin.close();
-
+    cout << "\n\n\n\n\t\t\t\t\t\t\t\t<-------------- Pay Salary ---------------->";
     fin.open("trainers.dat", ios::binary | ios::in);
-    while (fin.read(reinterpret_cast<char *>(&Trainer), sizeof(Trainer)))
+    if (!fin)
     {
-        cout << "\n\t\t\t\t\t\t\t\t" << i + 1 << " ID: " << Trainer.id << endl;
-        cout << "\n\t\t\t\t\t\t\t\t_______________________\n\n";
-        i++;
+        cout << "\n\t\t\t\t\t\t\t\tfile not created yet!\n";
     }
-    fin.close();
-
-    cout << "\n\n\t\t\t\t\t\t\t\tEnter the ID you would like to pay salary to: ";
-    cin >> ws;
-    cin.get(id, 20);
-
-    fin.open("trainers.dat", ios::binary | ios::in);
-    while (fin.read(reinterpret_cast<char *>(&Trainer), sizeof(Trainer)))
+    else
     {
-        if (details.balance > Trainer.salary)
+        while (fin.read(reinterpret_cast<char *>(&Trainer), sizeof(Trainer)))
         {
-            if (strcmp(Trainer.id, id) == 0)
+            cout << "\n\t\t\t\t\t\t\t\t" << i + 1 << " ID: " << Trainer.id << endl;
+            cout << "\n\t\t\t\t\t\t\t\t_______________________\n\n";
+            i++;
+        }
+        fin.close();
+
+        cout << "\n\n\t\t\t\t\t\t\t\tEnter the ID you would like to pay salary to: ";
+        cin >> ws;
+        cin.get(id, 20);
+
+        fin2.open("trainers.dat", ios::binary | ios::in | ios::out);
+        while (fin2.read(reinterpret_cast<char *>(&Trainer), sizeof(Trainer)))
+        {
+            if (details.balance > Trainer.salary)
             {
-                details.balance -= Trainer.salary;
-                wallet.amount = Trainer.salary;
-                wallet.send = true;
-                wallet.recieve = false;
-                strcpy(wallet.reciever_id, Trainer.id);
-                char buffer[30];
-                strcpy(buffer, strcat(Trainer.id, "9911"));
-                wallet.setid(buffer);
-                wallet.setdate(getdate());
-                wallet.setime(gettime());
-                ofstream fout;
-                fout.open("transaction_history.dat", ios::app);
-                fout.write(reinterpret_cast<char *>(&wallet), sizeof(wallet));
-                fout.close();
-                cout << "\n\n\t\t\t\t\t\t\t\tSalary Paid Successfully!\n";
+                if (strcmp(Trainer.id, id) == 0)
+                {
+                    if (Trainer.paid != true)
+                    {
+                        details.balance -= Trainer.salary;
+                        Trainer.paid = true;
+                        wallet.amount = Trainer.salary;
+                        wallet.send = true;
+                        wallet.recieve = false;
+                        strcpy(wallet.reciever_id, Trainer.id);
+                        char buffer[30];
+                        fin2.seekp(-(long)sizeof(Trainer), ios_base::cur);
+                        fin2.write(reinterpret_cast<char *>(&Trainer), sizeof(Trainer));
+                        strcpy(buffer, strcat(Trainer.id, "911"));
+                        wallet.setid(buffer);
+                        wallet.setdate(getdate());
+                        wallet.setime(gettime());
+                        ofstream fout;
+                        fout.open("transaction_history.dat", ios::app);
+                        fout.write(reinterpret_cast<char *>(&wallet), sizeof(wallet));
+                        fout.close();
+                        cout << "\n\n\t\t\t\t\t\t\t\tSalary Paid Successfully!\n";
+                        break;
+                    }
+                    else
+                    {
+                        cout << "\n\n\t\t\t\t\t\t\t\tSalary already paid!\n";
+                    }
+                }
+            }
+            else
+            {
+                cout << "\n\n\t\t\t\t\t\t\t\tInsufficient Balance\n";
             }
         }
-        else
-        {
-            cout << "\n\n\t\t\t\t\t\t\t\tSalary cannot be paid\n";
-        }
+        fin2.close();
     }
-    fin.close();
-
     fout.open("Admin.dat", ios::binary | ios::out);
     fout.write(reinterpret_cast<char *>(&details), sizeof(details));
     fout.close();
@@ -2121,80 +2080,62 @@ void admin::view_monetary()
     fin2.read(reinterpret_cast<char *>(&details), sizeof(details));
     cout << "\n\n\t\t\t\t\t\t\t\tAvailable Balance is " << details.balance << endl;
     fin1.open("trainers.dat", ios::in | ios::binary);
-    fin.open("transaction_history.dat", ios::in | ios::binary);
     int paid = 0;
     int not_paid = 0;
-    if (!fin)
+    if (!fin1)
     {
-        cout << "\n\n\t\t\t\t\t\t\t\tError in opening transaction history!";
+        cout << "\n\n\t\t\t\t\t\t\t\tError in opening file!";
     }
     else
     {
         cout << "\n\n\t\t\t\t\t\t\t\tList of Trainers ID Who Recieved Salary!";
         while (fin1.read(reinterpret_cast<char *>(&Trainer), sizeof(Trainer)))
         {
-            while (fin.read(reinterpret_cast<char *>(&wallet), sizeof(wallet)))
+            if (Trainer.paid == true)
             {
-                // char buffer[20];
-                // strcpy(buffer, strcat(Trainer.id, "911"));
-                if (strcmp(Trainer.id, wallet.reciever_id) == 0)
-                {
-                    cout << "\n\n\t\t\t\t\t\t\t\tTrainer ID: " << Trainer.id;
-                    paid++;
-                }
+                cout << "\n\n\t\t\t\t\t\t\t\tTrainer ID: " << Trainer.id << endl;
+                paid++;
+                cout << "\n\t\t\t\t\t\t\t\t_________\n\n";
             }
         }
-        cout << "\n\t\t\t\t\t\t\t\t_______________________\n\n";
         fin1.close();
-        fin.close();
 
         fin1.open("trainers.dat", ios::in | ios::binary);
-        fin.open("transaction_history.dat", ios::in | ios::binary);
-
         cout << "\n\n\t\t\t\t\t\t\t\tList of Trainers ID Who Not Recieved Salary!";
-
         while (fin1.read(reinterpret_cast<char *>(&Trainer), sizeof(Trainer)))
         {
-            while (fin.read(reinterpret_cast<char *>(&wallet), sizeof(wallet)))
+            if (Trainer.paid == false)
             {
-                // char buffer[20];
-                // strcpy(buffer, strcat(Trainer.id, "911"));
-                if (strcmp(Trainer.id, wallet.reciever_id) != 0)
-                {
-                    cout << "\n\n\t\t\t\t\t\t\t\tTrainer ID: " << Trainer.id;
-                    not_paid++;
-                }
+                cout << "\n\n\t\t\t\t\t\t\t\tTrainer ID: " << Trainer.id << endl;
+                not_paid++;
+                cout << "\n\t\t\t\t\t\t\t\t_________\n\n";
             }
         }
-        cout << "\n\t\t\t\t\t\t\t\t_______________________\n\n";
+        fin1.close();
         cout << "\n\t\t\t\t\t\t\t\tNumber of Trainers Paid: " << paid << "\n\n";
         cout << "\n\t\t\t\t\t\t\t\tNumber of Trainers Not Paid: " << not_paid << "\n\n";
 
-        fin.close();
-        fin1.close();
-
-        fin3.open("client.dat", ios::in | ios::binary);
         fin.open("transaction_history.dat", ios::in | ios::binary);
-
+        fin3.open("client.dat", ios::in | ios::binary);
         cout << "\n\n\t\t\t\t\t\t\t\tList of Pending Clients ID with their Balance left!";
         int x = 0;
-
         while (fin3.read(reinterpret_cast<char *>(&Client), sizeof(Client)))
         {
             while (fin.read(reinterpret_cast<char *>(&wallet), sizeof(wallet)))
             {
-                // char buffer[20];
-                // strcpy(buffer, strcat(Client.id, "2233"));
-                if (strcmp(Client.id, wallet.sender_id) == 0)
+                char buffer[20];
+                char temp[20];
+                strcpy(temp, Client.id);
+                strcpy(buffer, strcat(temp, "223"));
+                if (strcmp(buffer, wallet.transaction_id) == 0)
                 {
-                    cout << "\n\n\t\t\t\t\t\t\t\tClient ID: " << Client.id;
-                    cout << "\n\n\t\t\t\t\t\t\t\tBalance Left: " << Client.due_ammount << endl;
+                    cout << "\n\n\t\t\t\t\t\t\t\tClient ID: " << Client.id << endl;
+                    cout << "\n\n\t\t\t\t\t\t\t\tBalance Left: " << Client.dueamount << endl;
                     x++;
-                    break;
+                    cout << "\n\t\t\t\t\t\t\t\t_________\n\n";
                 }
             }
         }
-        cout << "\n\t\t\t\t\t\t\t\t_______________________\n\n";
         cout << "\n\t\t\t\t\t\t\t\tNumber of Clients with Balance Left: " << x << "\n\n";
     }
 
@@ -2203,20 +2144,3 @@ void admin::view_monetary()
     fin.close();
     Monetary_database();
 }
-
-// void admin::view_monetary()
-// {
-
-//     ifstream afin, cfin;
-//     afin.open("Admin.dat", ios::in | ios::binary);
-//     afin.read(reinterpret_cast<char *>(&details), sizeof(details));
-//     cout << "Total Balance in account: " << details.balance;
-//     cout << "Clients with pending Payements";
-//     cfin.open("client.dat", ios::in | ios::binary);
-//     while (cfin.read(reinterpret_cast<char *>(&Client), sizeof(Client)))
-//     {
-//         if ((Client.balance - Client.paid )>0){
-
-//         }
-//     }
-// }
